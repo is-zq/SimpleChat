@@ -1,0 +1,18 @@
+数据库:
+	UserInfo:存储用户ID,密码,及名称,在线状态,socket,其中ID为主键.
+	FriendShip:存储用户的好友,两个字段:user_id及friend_id,二者均以外键关联UserInfo中的ID,创建复合主键(user_id,friend_id)确保好友关系不重复.
+	ConnectedShip:存储建立私聊的用户信息,first_id和second_id,以两个用户ID为第一个字段存两次.
+
+后端:
+	连接:使用epoll模型实现多路复用来接收客户端的连接.
+	注册:接收客户端账号密码,添加到UserInfo表中.
+	登陆:接收客户端账号密码,在UserInfo表中查找并反馈.
+	添加好友:在UserInfo中查找是否存在该用户,存在则将二者关系添加到FriendShip表.
+	查找好友:
+		通过用户名查找:查找UserInfo表中对应用户名的ID,再在FriendShip中筛出是好友关系的ID,并让用户选择具体是哪个ID.
+		通过ID查找:在FriendShip表中查找.
+	建立私聊:在查找好友后与该好友建立私聊窗口,将二者ID存入ConnectedShip.
+	私聊收发消息:在ConnectedShip中找到对方ID,将消息发送给对应socket.
+
+
+前端:
