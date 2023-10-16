@@ -13,6 +13,32 @@
 		通过ID查找:在FriendShip表中查找.
 	建立私聊:在查找好友后与该好友建立私聊窗口,将二者ID存入ConnectedShip.
 	私聊收发消息:在ConnectedShip中找到对方ID,将消息发送给对应socket.
+	
+协议:
+	json
+	{
+		type:login/send/heart/event
+		//登录请求
+		{
+			id:
+			password
+		}
+		//发送消息
+		{
+			content:
+			rsecv_type:private
+			recv_id: 群号/ID号
+		}
+		//心跳
+		{
+			status:ok
+		}
+
+		{
+			
+		}
+		
+	}
 
 
 前端:
