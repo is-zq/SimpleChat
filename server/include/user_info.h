@@ -1,20 +1,19 @@
 #ifndef _USER_INFO_
 #define _USER_INFO_
-#include <string>
 
 class UserInfo
 {
 private:
-    string ID;
-    string password;
-    string name;
+    std::string ID;
+    std::string password;
+    std::string name;
 
 public:
-    UserInfo(string ID,string password,string name);
-    string GetID();
-    string GetName();
-    bool ModifyPassword(string password);
-    bool ModifyName(string name);
+    UserInfo(std::string ID,std::string password,std::string name);
+    std::string GetID();
+    std::string GetName();
+    bool ModifyPassword(std::string password);
+    bool ModifyName(std::string name);
 };
 
 #endif
