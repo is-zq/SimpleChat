@@ -1,8 +1,6 @@
 #include "common.h"
 #include "tcp_socket.h"
 
-using namespace std;
-
 TcpSocket::TcpSocket()
 {
     sock = socket(AF_INET, SOCK_STREAM,IPPROTO_TCP);
@@ -85,7 +83,7 @@ TcpSocket TcpSocket::Accept()
         perror("accepet");
         exit(-1);
     }
-    return TcpSocket(clnt_sock,clnt_addr.sin_addr.s_addr,clnt_addr.sin_port);
+    return std::move(TcpSocket(clnt_sock,clnt_addr.sin_addr.s_addr,clnt_addr.sin_port));
 }
 
 int TcpSocket::Connect(long addr,int port)
@@ -102,15 +100,15 @@ int TcpSocket::Connect(long addr,int port)
         return 0;
 }
 
-string TcpSocket::Recv()
+std::string TcpSocket::Recv()
 {
     char buf[BUF_LEN] = {0};
     if(recv(this->sock,buf,BUF_LEN,0) == -1)
-        return string();
-    return string(buf);
+        return std::string();
+    return std::string(buf);
 }
 
-int TcpSocket::Send(const string &msg)
+int TcpSocket::Send(const std::string &msg)
 {
     return send(this->sock,msg.c_str(),msg.size(),0);
 }
