@@ -2,6 +2,7 @@
 #define _TCP_SOCKET_
 
 #define BUF_LEN 1024
+#define MAX_QUEUE 100
 
 class TcpSocket
 {
@@ -14,10 +15,11 @@ public:
     TcpSocket();                               //创建socket不绑定
     TcpSocket(int sock,long addr,int port);    //封装已有socket
     TcpSocket(long addr,int port);             //创建新的socket并绑定
-    TcpSocket(TcpSocket&& other);                 //移动构造
+    TcpSocket(TcpSocket&& other);              //移动构造
     int get_sock();
     long get_addr();
     int get_port();
+    int Listen();
     TcpSocket Accept();
     int Connect(long addr,int port);
     std::string Recv();

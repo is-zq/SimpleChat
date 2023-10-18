@@ -66,6 +66,15 @@ int TcpSocket::get_port()
     return this->port;
 }
 
+int TcpSocket::Listen()
+{
+    int ret = listen(this->sock,MAX_QUEUE);
+    if(ret == 0)
+        return 1;
+    else
+        return 0;
+}
+
 TcpSocket TcpSocket::Accept()
 {
     int clnt_sock;
@@ -86,18 +95,18 @@ int TcpSocket::Connect(long addr,int port)
     op_addr.sin_family = AF_INET;
     op_addr.sin_addr.s_addr = htonl(addr);
     op_addr.sin_port = htons(port);
-    if(connect(this->sock,(struct sockaddr*)&op_addr,sizeof(op_addr)) == -1)
-    {
-        perror("connect");
-        exit(-1);
-    }
-    return 1;
+    int ret = connect(this->sock,(struct sockaddr*)&op_addr,sizeof(op_addr));
+    if(ret == 0)
+        return 1;
+    else
+        return 0;
 }
 
 string TcpSocket::Recv()
 {
     char buf[BUF_LEN] = {0};
-    recv(this->sock,buf,BUF_LEN,0);
+    if(recv(this->sock,buf,BUF_LEN,0) == -1)
+        return string();
     return string(buf);
 }
 
