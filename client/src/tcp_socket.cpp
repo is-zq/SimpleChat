@@ -30,8 +30,8 @@ TcpSocket::TcpSocket(long addr,int port)
     struct sockaddr_in serv_addr;
     memset(&serv_addr,0,sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = htonl(addr);
-    serv_addr.sin_port = htons(port);
+    serv_addr.sin_addr.s_addr = addr;
+    serv_addr.sin_port = port;
     if(bind(sock,(struct sockaddr*)&serv_addr,sizeof(serv_addr)) == -1)
     {
         perror("bind");
@@ -78,11 +78,13 @@ TcpSocket TcpSocket::Accept()
     int clnt_sock;
     struct sockaddr_in clnt_addr;
     socklen_t clnt_addr_size = sizeof(clnt_addr);
+    std::cout<<"waiting accept"<<std::endl;
     if((clnt_sock = accept(this->sock,(struct sockaddr*)&clnt_addr,&clnt_addr_size)) == -1)
     {
         perror("accepet");
         exit(-1);
     }
+    std::cout<<"accepted"<<std::endl;
     return std::move(TcpSocket(clnt_sock,clnt_addr.sin_addr.s_addr,clnt_addr.sin_port));
 }
 
@@ -91,8 +93,8 @@ int TcpSocket::Connect(long addr,int port)
     struct sockaddr_in op_addr;
     memset(&op_addr,0,sizeof(op_addr));
     op_addr.sin_family = AF_INET;
-    op_addr.sin_addr.s_addr = htonl(addr);
-    op_addr.sin_port = htons(port);
+    op_addr.sin_addr.s_addr = addr;
+    op_addr.sin_port = port;
     int ret = connect(this->sock,(struct sockaddr*)&op_addr,sizeof(op_addr));
     if(ret == 0)
         return 1;
