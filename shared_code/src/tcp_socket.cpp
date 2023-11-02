@@ -6,9 +6,14 @@ TcpSocket::TcpSocket()
     sock = socket(AF_INET, SOCK_STREAM,IPPROTO_TCP);
     if(sock == -1)
     {
-        perror("create sock");
+        perror("create sock:");
         exit(-1);
     }
+}
+
+TcpSocket::TcpSocket(int sock)
+{
+    this->sock = sock;
 }
 
 TcpSocket::TcpSocket(int sock,long addr,int port)
@@ -23,7 +28,7 @@ TcpSocket::TcpSocket(long addr,int port)
     this->sock = socket(AF_INET, SOCK_STREAM,IPPROTO_TCP);
     if(this->sock == -1)
     {
-        perror("create sock");
+        perror("create sock:");
         exit(-1);
     }
 
@@ -34,7 +39,7 @@ TcpSocket::TcpSocket(long addr,int port)
     serv_addr.sin_port = port;
     if(bind(sock,(struct sockaddr*)&serv_addr,sizeof(serv_addr)) == -1)
     {
-        perror("bind");
+        perror("bind:");
         exit(-1);
     }
     this->addr = addr;
@@ -47,6 +52,21 @@ TcpSocket::TcpSocket(TcpSocket&& other)
     this->addr = other.addr;
     this->port = other.port;
     other.sock = -1;
+}
+
+TcpSocket& TcpSocket::operator=(TcpSocket&& other)
+{
+    if(this != &other)
+    {
+        if(this->sock >= 0)
+            close(this->sock);
+
+        this->sock = other.sock;
+        this->addr = other.addr;
+        this->port = other.port;
+        other.sock = -1;
+    }
+    return *this;
 }
 
 int TcpSocket::get_sock()
@@ -78,13 +98,11 @@ TcpSocket TcpSocket::Accept()
     int clnt_sock;
     struct sockaddr_in clnt_addr;
     socklen_t clnt_addr_size = sizeof(clnt_addr);
-    std::cout<<"waiting accept"<<std::endl;
     if((clnt_sock = accept(this->sock,(struct sockaddr*)&clnt_addr,&clnt_addr_size)) == -1)
     {
-        perror("accepet");
+        perror("accepet:");
         exit(-1);
     }
-    std::cout<<"accepted"<<std::endl;
     return std::move(TcpSocket(clnt_sock,clnt_addr.sin_addr.s_addr,clnt_addr.sin_port));
 }
 
@@ -105,7 +123,7 @@ int TcpSocket::Connect(long addr,int port)
 std::string TcpSocket::Recv()
 {
     char buf[BUF_LEN] = {0};
-    if(recv(this->sock,buf,BUF_LEN,0) == -1)
+    if(recv(this->sock,buf,BUF_LEN,0) <= 0)
         return std::string();
     return std::string(buf);
 }
@@ -117,7 +135,7 @@ int TcpSocket::Send(const std::string &msg)
 
 TcpSocket::~TcpSocket()
 {
-    if(this->sock != -1)
+    if(this->sock >= 0)
     {
         close(this->sock);
     }
